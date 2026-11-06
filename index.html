@@ -300,7 +300,7 @@ const PS=[
 {n:"Brûlure curative",d:"Tsuki peut se brûler dans son propre mur de feu, mais toute brûlure qu'elle subit la SOIGNE (200% des dégâts) au lieu de la blesser."},
 {n:"Élan du guerrier",d:"Quand la Charge ou le Saut touchent un ennemi, leurs recharges diminuent (Charge -1,5s, Saut -8s par ennemi touché : l'ultime met 120s à recharger mais le passif le réduit énormément)."},
 {n:"Vitesse foudroyante",d:"Plus Maxine est rapide, plus ses dashs sont rapides ET font mal (jusqu'à ×3 de dégâts). Un petit bonus de vitesse se voit tout de suite."},
-{n:"Puissance vitale",d:"Ses dégâts physiques augmentent avec ses PV max (+2% des PV max en attaque physique)."},
+{n:"Puissance vitale",d:"Ses dégâts physiques augmentent avec ses PV max (+1% des PV max en attaque physique)."},
 {n:"Lame mortelle",d:"+100% de dégâts critiques de base (en plus des objets). Sa chance de critique vient des objets."},
 {n:"Sigil",d:"À chaque réapparition : sigil aléatoire, +15% de vitesse (triangle vert), d'attaque magique (losange violet) ou de PV (rond rouge). Perdu à la mort."},
 {n:"Rythme",d:"Si sa flèche touche, elle est rechargée immédiatement. La charge de la flèche raccourcit avec la vitesse d'attaque."},
@@ -663,7 +663,7 @@ function castA(i,p,a,mx,my){const t=p.t;
  else{const ln=Math.abs(p.y-LAY[0])<Math.abs(p.y-LAY[1])?0:1;fxp({x:p.x,y:LAY[ln],r:70,l:.5,m:.5,ring:1,col:'255,200,120'});
   later(.4,()=>{if(p.dead)return;S.bm.push({t,ln,x:p.x,dir:t?-1:1,end:t?480:WW-480,o:p,hit:[],dm:(110+MA(p)*1.1)*(1+p.ap)})})}
  if(i==0||i==2){}else p.cd[i]=p.cm[i]*(1-p.cdr);if(p.fl.includes('sb'))p.sbl=1;return 1}
-function cast(i,p,mx,my){if(p.dead||S.over||menu||p.st>0||p.ch||p.jp||p.wu||p.ca||p.ic||p.fear>0||(p.cd[i]>0&&!(p.ctl&&p.cl==14)))return 0;
+function cast(i,p,mx,my){if(p.dead||S.over||menu||p.st>0||p.ch||p.jp||p.wu||p.ca||p.ic||p.fear>0||(p.cd[i]>0&&!(p.ctl&&p.cl==14)&&!(p.cl==4&&i==0&&p.sdash>0)))return 0;
  const t=p.t,a=Math.atan2(my-p.y,mx-p.x),k=p.cl;let cd=1;if(p.rc&&!((k==4||k==6)&&i==2))p.rc=null;
  const SHT=o=>S.s.push({x:p.x,y:p.y,t,o:p,l:0,...o}),en=()=>foes(t);
  if(k==6)return castA(i,p,a,mx,my);
@@ -714,7 +714,7 @@ function cast(i,p,mx,my){if(p.dead||S.over||menu||p.st>0||p.ch||p.jp||p.wu||p.ca
   if(i==0){if(p.sdash>0){dash(p,a,220,.2,{k:'s',crit:1,dm:(70+PA(p)*1.3)*(1+p.ap)});p.sdash=0;p.sk=null;p.cd[0]=0;cd=0}
    else{fxp({arc:1,x:p.x,y:p.y,a,r:140,l:.28,m:.28});
     later(.12,()=>{if(p.dead)return;let n=0;for(const o of en())if(d(p,o)<140&&ad(Math.atan2(o.y-p.y,o.x-p.x),a)<1.3){hit(p,o,(45+PA(p)*.9)*(1+p.ap),'p',0,1);n++}
-     if(n){if(!p.sk)p.sk={n:0,l:3};p.sk.n++;if(p.sk.n>=2){p.sdash=3;p.sk=null;pop(p,'DASH prêt !','#fff')}}})}}
+     if(n){if(!p.sk)p.sk={n:0,l:3};p.sk.n++;if(p.sk.n>=2){p.sdash=3;p.cd[0]=0;p.sk=null;pop(p,'DASH prêt !','#fff')}}})}}
   else if(i==1)SHT({vx:Math.cos(a)*600,vy:Math.sin(a)*600,lf:.85,dm:(40+MA(p)*.9)*(1+p.ap),ty:'m',kbk:1});
   else if(i==2){p.rc={l:3,x:p.x,y:p.y,hp:p.hp};cd=0}
   else{p.wu={l:.2,a};cd=0}
